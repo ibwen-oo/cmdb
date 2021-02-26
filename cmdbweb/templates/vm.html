@@ -1,0 +1,129 @@
+{% extends "rbac/base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "web/css/vm.css" %}">
+{% endblock %}
+
+{% block content %}
+    <div class="body-content">
+        {# 搜索部分开始 #}
+        <div class="search">
+            <form class="form-inline">
+                <select name="search_field" id="search_field" class="form-control">
+                    <option value="ipaddress">IP地址</option>
+                    <option value="hostname">主机名</option>
+                    <option value="department">项目</option>
+                    <option value="idc">机房</option>
+                    <option value="status">状态</option>
+                </select>
+                <div class="form-group">
+                    <input id="search-content" type="text" class="form-control" placeholder="请输入搜索内容"
+                           name="search_content">
+                </div>
+                <button id="search-btn" type="submit" class="btn btn-success">Search</button>
+            </form>
+        </div>
+        {# 搜索部分结束 #}
+
+    <div class="option-vm">
+        <button class="btn btn-info">添加</button>
+        <button class="btn btn-danger">删除</button>
+    </div>
+
+        {# 内容表格部分开始 #}
+        <div class="server-content">
+            <table class="table table-bordered table-hover active">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="select_all"></th>
+                    <th>序号</th>
+                    <th>主机名</th>
+                    <th>主机类型</th>
+                    <th>ip地址</th>
+                    <th>操作系统</th>
+                    <th>CPU(核)</th>
+                    <th>内存(MB)</th>
+                    <th>项目</th>
+                    <th>机房</th>
+                    <th>状态</th>
+                    <th>备注</th>
+                    <th>选项</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for vm in vms %}
+                    <tr>
+                        <td><input type="checkbox" name="server_id"></td>
+                        <td class="server-id" style="display: none">{{ vm.id }}</td>
+                        <!-- 分页之后序号会重新从1计数,需要加上当前页已经接收到多少数据 -->
+                        <td>{{ forloop.counter|add:begin }}</td>
+                        <td>{{ vm.name }}</td>
+                        <td>{{ vm.get_server_type_display }}</td>
+                        <td>
+                            {% for nic in vm.nic.all %}
+                                {% if nic.ipaddress %}
+                                    {{ nic.ipaddress }}<br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ vm.system }}</td>
+                        <td>{{ vm.cpu }}</td>
+                        <td>{{ vm.memory }}</td>
+                        <td dep_id="{{ vm.department.id }}">{{ vm.department.name }}</td>
+                        <td idc_id="{{ vm.idc.id }}">{{ vm.idc }}</td>
+                        <td status_id="{{ vm.status }}">{{ vm.get_status_display }}</td>
+                        <td>{{ vm.desc }}</td>
+                        <td>
+                            <button class="btn-info edit-button">关机</button>
+                            <button class="btn-info edit-button">开机</button>
+                            <button class="btn-info edit-button">重启</button>
+                            <button class="btn-info"><a style="text-decoration: none;color: white"
+                                                        href="{% url "cmdbweb:vm_detail" vm.id %}">详细</a>
+                            </button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {# 内容表格部分结束 #}
+
+        {# 分页部分开始 #}
+        <div class="pagination">
+            <!--分页-->
+            {{ pagination_html_str|safe }}
+        </div>
+        {# 分页部分结束 #}
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        // 根据选择改变搜索类型事件
+        $("ul > li > a.search-type").on("click", function () {
+            let val = $(this).text()
+            // console.log(val)
+            $("#search-option").text(val)
+        })
+
+        // 搜索事件
+        $("#search-btn").on("click", function () {
+            // 获取搜索类型和搜索框中的内容
+            let search_field = $("#search_field").val()
+            let search_content = $("#search-content").val()
+            console.log(search_field)
+            console.log(search_content)
+            $.ajax({
+                url: "{% url "cmdbweb:server" %}?search_field=" + search_field + "&search_content=" + search_content,
+                type: "get",
+                success: function (args) {
+                    console.log("搜索内容")
+                    //window.location.reload();
+                }
+            })
+        })
+    </script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% load static %}
+{% load customize_tags %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "fontawesome/css/font-awesome.min.css" %}">
+    <link rel="stylesheet" href="{% static "rbac/css/base.css" %}">
+    {# head 部分block #}
+    {% block head %}{% endblock %}
+</head>
+
+<!-- 导航栏开始 -->
+<div class="pg-header">
+    <div class="logo left">CMDB管理系统</div>
+
+    <div class="head-center left">
+        <a href="">资产管理</a>
+        <a href="">资产录入</a>
+        <a href="">配置管理</a>
+        <a href="{% url 'cmdbweb:deploy' %}">部署环境</a>
+    </div>
+
+    <div class="user-area avatar right">
+        {% if request.session.user_info.username %}
+            <a href="">{{ request.session.user_info.username }}</a>
+        {% else %}
+            <a href="{% url "cmdbweb:login" %}">登录</a>
+        {% endif %}
+
+        <img src="/media/avatars/default.jpg" alt="" style="width: 40px;height: 40px">
+        <div class="user-info">
+            <ul type="none">
+                <li><a class="reset-a" href="">用户信息</a></li>
+                <li><a class="reset-a" href="/logout/">注销</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- 导航栏结束 -->
+
+{# body开始 #}
+<div class="pg-body">
+    {# 左侧导航栏开始 #}
+    {% load customize_tags %}
+    {% multi_menu request %}
+    {# 左侧导航栏结束 #}
+
+    {# 内容部分开始 #}
+    <div class="content">
+        {# 面包屑开始 #}
+        <div class="access-path">
+                {% load customize_tags %}
+                {% breadcrumb request %}
+        </div>
+        {# 面包屑结束 #}
+
+        {# body内容部分 block #}
+    <div class="body-base">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+    </div>
+    {# 内容部分结束 #}
+</div>
+{# body结束 #}
+
+<script src="{% static "jquery-3.3.1/jquery-3.3.1.js" %}"></script>
+<script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+<script src="{% static "rbac/js/menu.js" %}"></script>
+<script src="{% static "getcsrftoken.js" %}"></script>
+
+
+{# js部分block #}
+{% block js %}{% endblock %}
+
+</html>

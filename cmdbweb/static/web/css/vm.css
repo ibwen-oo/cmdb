@@ -1,0 +1,39 @@
+
+.body-content {
+    margin-top: -15px;
+    border-left: 1px solid #dddddd;
+    border-right: 1px solid #dddddd;
+}
+
+/*搜索部分样式*/
+.search {
+    margin-left: 5px;
+}
+
+.option-vm {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+/*表格上面加一条分割线 */
+.server-content {
+    margin-top: 5px;
+    border-top: 2px solid #2b669a;
+}
+
+
+/*表格内容水平居中垂直居中*/
+.table-bordered > tbody > tr > td, .table-bordered > thead > tr > th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/*修改鼠标悬浮到表格的颜色*/
+.table-hover > tbody > tr:hover {
+    background-color: #D1E9E9 !important;
+}
+
+/*分页显示位置*/
+.pagination {
+    float: right;
+}

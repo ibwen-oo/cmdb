@@ -1,0 +1,183 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background-color: #F5F5F5;
+}
+
+/*向左浮动*/
+.left {
+    float: left;
+}
+
+/*向右浮动*/
+.right {
+    float: right;
+}
+
+/*顶部导航栏样式*/
+.pg-header {
+    height: 48px;
+    min-width: 1190px;
+    background-color: #282b33;
+    line-height: 48px;
+}
+
+/*顶部导航栏logo部分样式*/
+.pg-header .logo {
+    color: white;
+    font-size: 18px;
+    width: 200px;
+    text-align: center;
+    background-color: #282b33;
+    border-right: 1px solid #dddddd;
+}
+
+/*顶部导航栏a标签样式*/
+.pg-header a {
+    display: inline-block;
+    padding: 0 5px;
+    color: white;
+    text-decoration: none;
+}
+
+/*设置顶部导航栏中间部分a标签间距*/
+.pg-header .head-center a {
+    margin-left: 10px;
+}
+/*设置顶部导航栏中间部分a标签鼠标悬浮时颜色*/
+.pg-header .head-center a:hover {
+    background-color: rgba(0,0,0,.65);
+}
+
+
+/*用户头像样式*/
+.pg-header .avatar {
+    padding: 0 20px;
+}
+/*用户头像样式*/
+.pg-header .avatar img {
+    border-radius: 50%;
+}
+/*用户头像样式*/
+.pg-header .avatar .user-info {
+    display: none;
+    position: absolute;
+    width: 150px;
+    top: 48px;
+    right: 18px;
+    background-color: #fff;
+    color: black!important;
+    z-index: 100;
+}
+/*鼠标悬浮用户信息区域显示内容样式*/
+.pg-header .avatar .user-info ul li{
+    margin-top: 5px;
+    line-height: 30px;
+}
+/*鼠标悬浮用户信息区域显示内容样式*/
+.pg-header .avatar .user-info ul li a {
+    text-decoration: none;
+    color: rgba(0,0,0,.65);
+}
+/*鼠标悬浮用户信息区域显示内容*/
+.pg-header .user-area:hover .user-info {
+    display: block;
+}
+
+
+/*左侧导航栏样式*/
+.menu-left {
+    width: 200px;
+    position: absolute;
+    top: 48px;
+    bottom: 0;
+    left: 1px;
+    border-right: 1px solid #dddddd;
+    background-color: #fff;
+}
+
+.menu-left .item {
+    background-color: white;
+}
+
+.menu-left .item > .menu-title {
+    padding: 10px 5px;
+    border-bottom: 1px solid #dddddd;
+    cursor: pointer;
+    color: #333;
+    display: block;
+    background: #efefef;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #efefef), color-stop(1, #fafafa));
+    background: -ms-linear-gradient(bottom, #efefef, #fafafa);
+    background: -o-linear-gradient(bottom, #efefef, #fafafa);
+    filter: progid:dximagetransform.microsoft.gradient(startColorStr='#e3e3e3', EndColorStr='#ffffff');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fafafa',EndColorStr='#efefef')";
+    box-shadow: inset 0 1px 1px white;
+}
+
+/*隐藏二级菜单的class*/
+.hide {
+    display: none !important;
+}
+
+.menu-left .item .menu-title > .menu-body {
+    border-bottom: 2px solid #dddddd;
+}
+
+.menu-left .item > .menu-body a {
+    display: block;
+    padding: 5px 20px;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    font-size: 13px;
+}
+
+.menu-left .item > .menu-body a.active {
+    border-left: 3px solid #2F72AB;
+}
+
+.menu-left .item > .menu-body a:hover {
+    border-left: 2px solid #2F72AB;
+    cursor: pointer;
+}
+
+.body-base {
+    margin-left: 8px;
+    margin-top: -10px;
+}
+
+
+/*内容部分样式*/
+.content {
+    position: absolute;
+    top: 48px;
+    left: 205px;
+    bottom: 0;
+    right: 0;
+    min-width: 990px;
+    overflow: scroll;
+    z-index: 99;
+}
+
+/*面包屑样式a标签*/
+.content .access-path a {
+    text-decoration: none;
+    font-size: 15px;
+}
+
+/*面包屑样式*/
+.content .access-path .breadcrumb{
+    margin-left: -3px;
+    padding-bottom: 5px;
+    background-color: #F5F5F5;
+    border-bottom: 2px solid #dddddd;
+}
+
+/*二级菜单样式*/
+ul {
+    margin-top: 5px;
+    padding-top: 5px;
+}
+

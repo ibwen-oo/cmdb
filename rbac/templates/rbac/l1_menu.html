@@ -1,0 +1,16 @@
+<div class="menu-left">
+    {% for menu in menu_list %}
+        <div class="item">
+            <div class="menu-title"><span class="icon-wrap"><i class="fa fa-server"></i> 主机管理</span>
+            </div>
+            <div class="menu-body hide">
+                {# <li class="menu-two">服务器列表</li>#}
+                {# <li class="menu-two">宿主机管理</li>#}
+                {# <li class="menu-two">虚拟机管理</li>#}
+                <a id="server-list" href="{% url "cmdbweb:server" %}">服务器列表</a>
+                <a href="#">宿主机管理</a>
+                <a href="{% url "cmdbweb:vm" %}">虚拟机管理</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>

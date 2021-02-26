@@ -1,0 +1,105 @@
+html {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background: url(../img/bg.jpg) no-repeat 0px 0px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    -moz-background-size: 100% 100%;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.login-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    padding: 40px;
+    /* background-color: #4a5a6a; */
+    background-color: rgba(75, 81, 95, 0.3);
+    box-sizing: border-box;
+    box-shadow: 0 15px 25px rgba(0, 0, 0, .5);
+    border-radius: 10px;
+}
+
+.login-box h2 {
+    margin: 0 0 30px;
+    padding: 0;
+    text-align: center;
+    color: #fff;
+}
+
+.switch span.active {
+    color: rgb(181, 154, 254);
+}
+
+.login-box .login-field {
+    position: relative;
+}
+
+.login-box .login-field input {
+    width: 100%;
+    padding: 15px 0;
+    font-size: 16px;
+    color: #fff;
+    margin-bottom: 20px;
+    border: none;
+    border-bottom: 1px solid #fff;
+    outline: none;
+    background: transparent;
+}
+
+.login-box .login-field label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    letter-spacing: 1px;
+    padding: 10px 0;
+    font-size: 18px;
+    color: #fff;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.login-box .login-field input:focus ~ label,
+.login-box .login-field input:valid ~ label {
+    top: -20px;
+    left: 0;
+    color: darkgreen;
+    font-size: 13px;
+}
+
+.button {
+    border: none;
+    outline: none;
+    margin: 2rem 0 0;
+    width: 50%;
+    height: 3.0rem;
+    border-radius: 3rem;
+    background: linear-gradient(90deg, rgb(181, 154, 254), rgb(245, 189, 253));
+    box-shadow: 0 0 8px rgb(181, 154, 254);
+    cursor: pointer;
+}
+
+p {
+    margin: 15px auto;
+    padding: 0;
+    font-size: 16px;
+    color: white;
+    display: block;
+    text-align: center;
+}
+
+a {
+    color: greenyellow;
+    cursor: pointer;
+}

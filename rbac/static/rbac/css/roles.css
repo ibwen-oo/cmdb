@@ -1,0 +1,57 @@
+/*修改和body部分的上间距*/
+.roles-container {
+    /*margin-top: -15px;*/
+}
+
+/*a标签去掉下划线并修改鼠标悬浮时样式*/
+a {
+    text-decoration: none!important;
+    cursor: pointer;
+}
+
+/*修改鼠标悬浮到表格的颜色*/
+.table-hover > tbody > tr:hover {
+    background-color: #D1E9E9 !important;
+}
+
+/*表格内容居中*/
+.table-bordered > tbody > tr > td, .table-bordered > thead > tr > th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+/*隐藏模态框*/
+.hide {
+    display: none;
+}
+
+/*模态框*/
+.shadow-self {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: black;
+    opacity: 0.4;
+    z-index: 999;
+}
+
+/*编辑服务器信息对话框*/
+.modal-self {
+    z-index: 1000;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    height: 230px;
+    width: 550px;
+    background-color: white;
+    margin-left: -300px;
+    margin-top: -150px;
+}
+
+/*调整对话框内容位置*/
+.box-container {
+    margin-top: 18px;
+}

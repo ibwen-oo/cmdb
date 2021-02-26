@@ -1,0 +1,79 @@
+
+.body-content {
+    /*margin-top: -15px;*/
+    /*margin-left: 3px;*/
+}
+
+/*搜索部分样式*/
+.search {
+    /*margin-left: 2px!important;*/
+}
+/*搜索部分li中a标签悬浮时鼠标形状*/
+ul > li a:hover {
+    cursor: pointer;
+}
+
+/*表格上面加一条分割线 */
+.server-content {
+    margin-top: 5px;
+    border-top: 2px solid #2b669a;
+}
+
+.server-content a {
+    color: black;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+/*表格内容水平居中垂直居中*/
+.table-bordered > tbody > tr > td, .table-bordered > thead > tr > th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/*修改鼠标悬浮到表格的颜色*/
+.table-hover > tbody > tr:hover {
+    background-color: #D1E9E9 !important;
+}
+
+/*分页显示位置*/
+.pagination {
+    margin-top: -5px!important;
+    float: right;
+}
+
+/*隐藏模态框*/
+.hide {
+    display: none;
+}
+
+/*模态框*/
+.shadow-self {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: black;
+    opacity: 0.4;
+    z-index: 999;
+}
+
+/*编辑服务器信息对话框*/
+.modal-self {
+    z-index: 1000;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    height: 450px;
+    width: 550px;
+    background-color: white;
+    margin-left: -300px;
+    margin-top: -230px;
+}
+
+/*调整对话框内容位置*/
+.box-container {
+    margin-top: 10px;
+}

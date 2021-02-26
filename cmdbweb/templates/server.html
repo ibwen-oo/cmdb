@@ -1,0 +1,299 @@
+{% extends "rbac/base.html" %}
+{% load static %}
+{% load customize_tags %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "web/css/server.css" %}">
+    <title>服务器列表</title>
+{% endblock %}
+
+{% block content %}
+    <div class="body-content">
+        {# 搜索部分开始 #}
+        <div class="search">
+            <form class="form-inline">
+                <select name="search_field" id="search_field" class="form-control">
+                    <option value="ipaddress">IP地址</option>
+                    <option value="hostname">主机名</option>
+                    <option value="department">项目</option>
+                    <option value="idc">机房</option>
+                    <option value="status">状态</option>
+                </select>
+                <div class="form-group">
+                    <input id="search-content" type="text" class="form-control" placeholder="请输入搜索内容"
+                           name="search_content">
+                </div>
+                <button id="search-btn" type="submit" class="btn btn-default">Search</button>
+            </form>
+        </div>
+        <!--
+        <div class="search">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="input-group">
+                        <div class="input-group-btn">
+                            <button id="search-option" type="button" class="btn btn-default">IP地址</button>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a id="ipaddress" class="search-type">IP地址</a></li>
+                                <li><a id="hostname" class="search-type">主机名</a></li>
+                                <li><a id="server_type" class="search-type">主机类型</a></li>
+                                <li><a id="department" class="search-type">项目</a></li>
+                                <li><a id="idc" class="search-type">机房</a></li>
+                                <li><a id="status" class="search-type">状态</a></li>
+                            </ul>
+                        </div>
+                        <input id="search-content" type="text" class="form-control" aria-label="...">
+                    </div>
+                </div>
+                <div>
+                    <button id="search-btn" type="button" class="btn btn-success">Search</button>
+                </div>
+            </div>
+        </div>
+        -->
+        {# 搜索部分结束 #}
+
+        {# 内容表格部分开始 #}
+        <div class="server-content">
+            <table class="table table-bordered table-hover active">
+                <thead class="option-head">
+                <tr>
+                    <th><a>添加</a></th>
+                    <th><a>删除</a></th>
+                    <th><a>编辑模式</a></th>
+                    <th><a>保存</a></th>
+                    <th><a>刷新</a></th>
+                </tr>
+                </thead>
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="select_all"></th>
+                    <th>序号</th>
+                    <th>主机名</th>
+                    <th>主机类型</th>
+                    <th>ip地址</th>
+                    <th>操作系统</th>
+                    <th>CPU(核)</th>
+                    <th>内存(MB)</th>
+                    <th>项目</th>
+                    <th>机房</th>
+                    <th>状态</th>
+                    <th>备注</th>
+                    {# 使用自定义过滤器验证是否有操作服务器信息的权限 #}
+                    {% if request|has_permission:"cmdbweb:detail-GET" or request|has_permission:"cmdbweb:server-PUT" %}
+                        <th>选项</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for server in servers %}
+                    <tr>
+                        <td><input type="checkbox" class="selector_server" name="server_id"></td>
+                        <td class="server-id" style="display: none">{{ server.id }}</td>
+                        <!-- 分页之后序号会重新从1计数,需要加上当前页已经接收到多少数据 -->
+                        <td>{{ forloop.counter|add:begin }}</td>
+                        <td>{{ server.name }}</td>
+                        <td>{{ server.get_server_type_display }}</td>
+                        <td>
+                            {% for nic in server.nic.all %}
+                                {% if nic.ipaddress %}
+                                    {{ nic.ipaddress }}<br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ server.system }}</td>
+                        <td>{{ server.cpu }}</td>
+                        <td>{{ server.memory }}</td>
+                        <td dep_id="{{ server.department.id }}">{{ server.department.name }}</td>
+                        <td idc_id="{{ server.idc.id }}">{{ server.idc }}</td>
+                        <td status_id="{{ server.status }}">{{ server.get_status_display }}</td>
+                        <td>{{ server.desc }}</td>
+                        <td>
+                            {# 使用自定义过滤器验证是否有编辑服务器信息的权限 #}
+                            {% if request|has_permission:"cmdbweb:server-PUT" %}
+                                <button class="btn btn-default edit-button">
+                                    <i class="fa fa-edit" aria-hidden="true"></i> 编辑
+                                </button>
+                            {% endif %}
+                            {# 使用自定义过滤器验证是否有查看服务器详情的权限 #}
+                            {% if request|has_permission:"cmdbweb:detail-GET" %}
+                                <button class="btn-info btn-sm">
+                                    <a style="text-decoration: none;color: white"href="{% memory_url request "cmdbweb:detail" server.id %}">
+                                    <i class="fa fa-th" aria-hidden="true"></i> 详细
+                                </a>
+                                </button>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {# 内容表格部分结束 #}
+
+        {# 分页部分开始 #}
+        <div class="pagination">
+            <!--分页-->
+            {{ pagination_html_str|safe }}
+        </div>
+        {# 分页部分结束 #}
+
+        {# 编辑单个服务器部分开始 #}
+        <div id="shadow-self" class="shadow-self hide"></div>
+        <div id="modal-self" class="modal-self hide">
+            <div class="box-container">
+                <form class="form-horizontal" method="post" novalidate>
+                    {% csrf_token %}
+                    {# 隐藏的input,存放正在编辑的server的id #}
+                    <input id="edit-id" type="text" style="display: none">
+                    {% for field in server_form %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">{{ field.label }}</label>
+                            <div class="col-sm-8">
+                                {{ field }}
+                                <span style="color: red;">{{ field.errors.0 }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-8">
+                            <input id="save-btn" type="button" value="保 存" class="btn btn-primary">
+                            <input id="cancel-btn" type="button" value="取 消" class="btn btn-primary">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {# 编辑单个服务器部分结束 #}
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        // 编辑按钮事件
+        $(".edit-button").on("click", function () {
+            // 弹出对话框
+            $("#shadow-self").removeClass("hide")
+            $("#modal-self").removeClass("hide")
+            // 给编辑框添加默认值
+            let td_ele = $(this).parent().prevAll()
+            let desc = $(td_ele[0]).text()
+            let status = $(td_ele[1]).attr("status_id")
+            let idc = $(td_ele[2]).attr("idc_id")
+            let department = $(td_ele[3]).attr("dep_id")
+            let memory = $(td_ele[4]).text()
+            let cpu = $(td_ele[5]).text()
+            let system = $(td_ele[6]).text()
+            let hostname = $(td_ele[9]).text()
+            $("#id_hostname").val(hostname)
+            $("#id_system").val(system)
+            $("#id_cpu").val(cpu)
+            $("#id_memory").val(memory)
+            $("#id_department").val(department)
+            $("#id_idc").val(idc)
+            $("#id_status").val(status)
+            $("#id_desc").val(desc)
+
+            // 找到正在编辑的服务器的id
+            let server_id = $(td_ele[11]).text()
+            let edit = $("#edit-id")
+            edit.val(server_id)
+        })
+
+        // 编辑界面保存按钮事件
+        $("#save-btn").on("click", function () {
+            // alert("保存修改信息")
+            // 1. 获取编辑后的输入框中的数据,
+            // 2. 发送Ajax请求
+            // 3. 后端返回修改结果
+            // 4. 如果修改成功,跳转到之前的页面(如何记录之前是在服务器列表的第几页),
+            // 5. 如果修改失败,显示错误信息
+
+            let server_id = $("#edit-id").val()
+            let hostname = $("#id_hostname").val()
+            let system = $("#id_system").val()
+            let cpu = $("#id_cpu").val()
+            let memory = $("#id_memory").val()
+            let department = $("#id_department").val()
+            let idc = $("#id_idc").val()
+            let status = $("#id_status").val()
+            let desc = $("#id_desc").val()
+
+            $.ajax({
+                url: "{% memory_url request "cmdbweb:server" %}",
+                type: "PUT",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "server_id": server_id,
+                    "hostname": hostname,
+                    "system": system,
+                    "cpu": cpu,
+                    "memory": memory,
+                    "department": department,
+                    "idc": idc,
+                    "status": status,
+                    "desc": desc,
+                }),
+                success: function (args) {
+                    // console.log(args)
+                    // console.log(typeof args)
+                    // let msg = JSON.parse(args);
+                    // 数据库修改成功后刷新当前页面
+                    if (args.status === "success") {
+                        // console.log("刷新页面")
+                        window.location.reload();
+                    } else {
+                        alert(args)
+                    }
+                }
+            })
+        })
+
+        // 编辑界面取消按钮事件
+        $("#cancel-btn").on("click", function () {
+            $("#shadow-self").addClass("hide")
+            $("#modal-self").addClass("hide")
+        })
+
+        // 根据选择改变搜索类型事件
+        $("ul > li > a.search-type").on("click", function () {
+            let val = $(this).text()
+            // console.log(val)
+            $("#search-option").text(val)
+        })
+
+        // 搜索事件
+        $("#search-btn").on("click", function () {
+            // 获取搜索类型和搜索框中的内容
+            let search_field = $("#search_field").val()
+            let search_content = $("#search-content").val()
+            console.log(search_field)
+            console.log(search_content)
+            $.ajax({
+                url: "{% memory_url request "cmdbweb:server" %}?search_field=" + search_field + "&search_content=" + search_content,
+                type: "get",
+                success: function (args) {
+                    console.log("搜索内容")
+                    //window.location.reload();
+                }
+            })
+        })
+
+        // 全选checkbox事件
+        $("#select_all").on("click", function () {
+            if ($(this)[0].checked) {
+                $(".selector_server").attr("checked", "checked")
+            } else {
+                $(".selector_server").removeAttr("checked")
+            }
+        })
+    </script>
+{% endblock %}

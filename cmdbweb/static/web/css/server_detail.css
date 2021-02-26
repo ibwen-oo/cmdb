@@ -1,0 +1,25 @@
+.body-content {
+    margin-top: -15px;
+}
+
+/*基础信息部分样式*/
+p {
+    padding-left: 8px;
+    padding-bottom: 5px;
+    margin-top: 5px;
+    padding-top: 5px;
+    margin-bottom: 0;
+    border-left: 2px solid #2b669a;
+    font-size: 14px;
+    background-color: #d9edf7;
+    border-bottom: 2px solid #dddddd;
+}
+
+/*修改鼠标悬浮到表格的颜色*/
+.table-hover>tbody>tr:hover {
+    background-color: #D1E9E9!important;
+}
+
+.detail-info {
+
+}

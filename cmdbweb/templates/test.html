@@ -1,0 +1,55 @@
+<div class="server-content">
+            <table class="table table-bordered table-hover active">
+                <thead>
+                <tr>
+                    <th><input type="checkbox"></th>
+                    <th>序号</th>
+                    <th>主机名</th>
+                    <th>主机类型</th>
+                    <th>ip地址</th>
+                    <th>操作系统</th>
+                    <th>CPU(核)</th>
+                    <th>内存(MB)</th>
+                    <th>项目</th>
+                    <th>机房</th>
+                    <th>状态</th>
+                    <th>备注</th>
+                    <th>选项</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for server in servers %}
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td style="display: none">{{ server.id }}</td>
+                        <!-- 分页之后序号会重新从1计数,需要加上当前页已经接收到多少数据 -->
+                        <td>{{ forloop.counter|add:begin }}</td>
+                        <td>{{ server.name }}</td>
+                        <td>{{ server.get_server_type_display }}</td>
+                        <td>
+                            {% for nic in server.servernetwork_set.all %}
+                                {% if nic.ipaddress %}
+                                    {{ nic.ipaddress }}<br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ server.system }}</td>
+                        <td>{{ server.cpu }}</td>
+                        <td>{{ server.memory }}</td>
+                        <td dep_id="{{ server.department.id }}">{{ server.department.name }}</td>
+                        <td idc_id="{{ server.idc.id }}">{{ server.idc }}</td>
+                        <td status_id="{{ server.status }}">{{ server.get_status_display }}</td>
+                        <td>{{ server.desc }}</td>
+                        <td>
+                            <button class="btn-info edit-button">编辑</button>
+                            <button class="btn-info"><a style="text-decoration: none;color: white"
+                                                        href="{% url "cmdbweb:server_detail" server.id %}">详细</a>
+                            </button>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>

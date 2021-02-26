@@ -1,0 +1,169 @@
+{% extends "rbac/base.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "rbac/css/users.css" %}">
+{% endblock %}
+
+{% block content %}
+    {# 用户列表开始 #}
+    <div class="user-list">
+        <div class="btn-group" style="margin: 5px 0">
+            {% csrf_token %}
+            <form id="_form" method="post" action="{% url 'rbac:user' %}">
+                <input type="hidden" name="name" value="value" />
+            <a class="btn btn-default" onclick="document.getElementById('_form').submit();">
+                <i class="fa fa-plus-square" aria-hidden="true"></i> 添加用户
+            </a>
+                </form>
+
+        </div>
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>用户名</th>
+                <th>邮箱</th>
+                <th>手机号</th>
+                <th>重置密码</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for row in users %}
+                <tr>
+                    <td class="hide">{{ row.id }}</td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ row.username }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>{{ row.phone }}</td>
+                    <td>
+                        <a href="{% url 'rbac:user'%}">重置密码</a>
+                    </td>
+                    <td>
+
+                        <button class="btn btn-default btn-xs edit-user">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                        </button>
+
+
+                        <button class="btn btn-danger btn-xs delete-user">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {# 用户列表结束 #}
+
+    {# 编辑单个用户信息部分开始 #}
+    <div id="shadow-self" class="shadow-self hide"></div>
+    <div id="modal-self" class="modal-self hide">
+        <div class="box-container">
+            <form class="form-horizontal" action="{% url "rbac:user" %}" novalidate>
+                {% csrf_token %}
+                <input id="edit-id" type="text" style="display: none">
+                {% for field in user_form %}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">{{ field.label }}</label>
+                        <div class="col-sm-8">
+                            {{ field }}
+                            <span style="color: red;">{{ field.errors.0 }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-8">
+                        <input id="save-btn" type="button" value="保 存" class="btn btn-primary">
+                        <input id="cancel-btn" type="button" value="取 消" class="btn btn-primary">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {# 编辑单个用户信息部分结束 #}
+
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        // 编辑用户事件
+        $(".edit-user").on("click", function () {
+            // 弹出对话框
+            $("#shadow-self").removeClass("hide")
+            $("#modal-self").removeClass("hide")
+            td_ele = $(this).parent().prevAll()
+            let user_id = $(td_ele[5]).text()
+            let username = $(td_ele[3]).text()
+            let email = $(td_ele[2]).text()
+            let phone = $(td_ele[1]).text()
+            $("#edit-id").val(user_id)
+            $("#id_username").val(username)
+            $("#id_email").val(email)
+            $("#id_phone").val(phone)
+        })
+
+        // 编辑界面保存按钮事件
+        $("#save-btn").on("click", function () {
+            // 1. 获取编辑后的输入框中的数据,
+            // 2. 发送Ajax请求
+            // 3. 后端返回修改结果
+            // 4. 如果修改成功,跳转到之前的页面,
+            // 5. 如果修改失败,显示错误信息
+            let uid = $("#edit-id").val()
+            let username = $("#id_username").val()
+            let email = $("#id_email").val()
+            let phone = $("#id_phone").val()
+            $.ajax({
+                url: "{% url "rbac:user" %}",
+                type: "PUT",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "uid": uid,
+                    "username": username,
+                    "email": email,
+                    "phone": phone,
+                }),
+                success: function (args) {
+                    if (args.status === "success") {
+                        // console.log("刷新页面")
+                        window.location.reload();
+                    } else {
+                        alert(args)
+                    }
+                }
+            })
+        })
+
+        // 编辑界面取消按钮事件
+        $("#cancel-btn").on("click", function () {
+            $("#shadow-self").addClass("hide")
+            $("#modal-self").addClass("hide")
+        })
+
+        // 删除用户事件
+        $(".delete-user").on("click", function () {
+            let td_ele = $(this).parent().prevAll()
+            let user_id = $(td_ele[5]).text()
+            console.log(user_id)
+            $.ajax({
+                url: "{% url "rbac:user" %}",
+                type: "DELETE",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "user_id": user_id
+                }),
+                success: function (args) {
+                    if (args.status === "success") {
+                        window.location.reload();
+                    } else {
+                        alert(args)
+                    }
+                }
+            })
+        })
+    </script>
+{% endblock %}

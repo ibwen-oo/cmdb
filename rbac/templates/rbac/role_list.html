@@ -1,0 +1,217 @@
+{% extends 'rbac/base.html' %}
+{% load static %}
+{% load customize_tags %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "rbac/css/roles.css" %}">
+{% endblock %}
+
+{% block content %}
+    {# 角色列表开始 #}
+    <div class="roles-container">
+        {% if request|has_permission:"rbac:roles-POST" %}
+            <div class="btn-group" style="margin-bottom: 5px">
+                <button id="add-roles" class="btn btn-default"><i class="fa fa-plus-square" aria-hidden="true"></i> 添加角色
+                </button>
+            </div>
+        {% endif %}
+
+        <table class="table table-bordered table-hover active">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>名称</th>
+                <th>关联权限</th>
+                {% if request|has_permission:"rbac:roles-PUT" or request|has_permission:"rbac:roles-DELETE" %}
+                    <th>选项</th>
+                {% endif %}
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for row in roles %}
+                <tr>
+                    <td class="role-id" style="display: none">{{ row.id }}</td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ row.title }}</td>
+                    <td><a>关联权限</a></td>
+                    {% if request|has_permission:"rbac:roles-PUT" or request|has_permission:"rbac:roles-DELETE" %}
+                        <td>
+                            {% if request|has_permission:"rbac:edit_role-GET" %}
+                                <a id="edit-role" href="{% memory_url request "rbac:edit_role" row.id %}" class="btn btn-default btn-xs edit-role">
+                                    <i class="fa fa-edit" aria-hidden="true"></i> 编辑
+                                </a>
+                            {% endif %}
+                            {% if request|has_permission:"rbac:roles-DELETE" %}
+                                <button id="delete-role" class="btn btn-danger btn-xs delete-role">
+                                    <i class="fa fa-trash-o"></i> 删除
+                                </button>
+                            {% endif %}
+                        </td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {# 角色列表结束 #}
+
+    {# 添加角色开始 #}
+    <div class="add-role hide">
+        <form class="form-horizontal" action="{% url "rbac:roles" %}" method="post" novalidate>
+            {% csrf_token %}
+            {% for field in role_form %}
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">{{ field.label }}</label>
+                    <div class="col-sm-8">
+                        {{ field }}
+                        <span style="color: red;">{{ field.errors.0 }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-8">
+                    <input type="submit" value="保 存" class="btn btn-primary">
+                </div>
+            </div>
+        </form>
+    </div>
+    {# 添加角色结束 #}
+
+    {# 编辑单个角色信息部分开始 #}
+    {# 未使用模态框方式编辑角色 #}
+{#    <div id="shadow-self" class="shadow-self hide"></div>#}
+{#    <div id="modal-self" class="modal-self hide">#}
+{#        <div class="box-container">#}
+{#            <form class="form-horizontal" action="{% url "rbac:edit_role" 1 %}" novalidate>#}
+{#                {% csrf_token %}#}
+{#                <input id="edit-id" type="text" style="display: none">#}
+{#                {% for field in role_form %}#}
+{#                    <div class="form-group">#}
+{#                        <label class="col-sm-2 control-label">{{ field.label }}</label>#}
+{#                        <div class="col-sm-8">#}
+{#                            {{ field }}#}
+{#                            <span style="color: red;">{{ field.errors.0 }}</span>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% endfor %}#}
+{#                <div class="form-group">#}
+{#                    <div class="col-sm-offset-2 col-sm-8">#}
+{#                        <input id="save-btn" type="button" value="保 存" class="btn btn-primary">#}
+{#                        <input id="cancel-btn" type="button" value="取 消" class="btn btn-primary">#}
+{#                    </div>#}
+{#                </div>#}
+{#            </form>#}
+{#        </div>#}
+{#    </div>#}
+    {# 编辑单个角色信息部分结束 #}
+{% endblock %}
+
+{% block js %}
+    <script>
+        // 点击添加角色按钮,隐藏角色列表,显示添加角色form.
+        // 生成对应的 breadcrumb.
+        $("#add-roles").on("click", function () {
+            $(".roles-container").addClass("hide")
+            $(".add-role").removeClass("hide")
+            let li_ele = '<li class="active">添加角色</li>'
+            let a_href = $(".breadcrumb>.active").attr("data-href")
+            let a_text = $(".breadcrumb>.active").text()
+            let a_ele = "<a href='" + a_href + "'>" + a_text + "</a>"
+            // console.log(a_ele)
+            $(".breadcrumb>.active").text("")
+            $(".breadcrumb>.active").html(a_ele)
+            $(".breadcrumb").children().removeClass("active")
+            $(li_ele).appendTo(".breadcrumb").addClass("active")
+        })
+
+        // 编辑角色事件
+        /*
+        $(".edit-role").on("click", function () {
+            // 弹出对话框
+            $("#shadow-self").removeClass("hide")
+            $("#modal-self").removeClass("hide")
+            // 给编辑框添加默认值
+            let td_ele = $(this).parent().prevAll()
+            let role_title = $(td_ele[1]).text()
+            // let permissions = ?
+            let role_id = $(td_ele[3]).text()
+            // console.log(role_title)
+            // console.log(role_id)
+            $(".box-container #id_title").val(role_title)
+            // $(".box-container #id_permissions").val(permissions)
+            $(".box-container #edit-id").val(role_id)
+        })
+
+        // 编辑界面保存按钮事件
+        $("#save-btn").on("click", function () {
+            // alert("保存修改信息")
+            // 1. 获取编辑后的输入框中的数据,
+            // 2. 发送Ajax请求
+            // 3. 后端返回修改结果
+            // 4. 如果修改成功,跳转到之前的页面
+            // 5. 如果修改失败,显示错误信息
+
+            let role_id = $("#edit-id").val()
+            let title = $("#id_title").val()
+            //let permissions = $("#id_permissions").val()
+
+            $.ajax({
+                url: "{% memory_url request "rbac:roles" %}",
+                type: "PUT",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "role_id": role_id,
+                    "title": title,
+                    "permissions": permissions,
+                }),
+                success: function (args) {
+                    // console.log(args)
+                    // console.log(typeof args)
+                    // let msg = JSON.parse(args);
+                    // 数据库修改成功后刷新当前页面
+                    if (args.status === "success") {
+                        // console.log("刷新页面")
+                        window.location.reload();
+                    } else {
+                        alert(args)
+                    }
+                }
+            })
+        })
+
+        // 编辑界面取消按钮事件
+        $("#cancel-btn").on("click", function () {
+            $("#shadow-self").addClass("hide")
+            $("#modal-self").addClass("hide")
+        })
+        */
+
+        // 删除角色事件
+        $(".delete-role").on("click", function () {
+            let td_ele = $(this).parent().prevAll()
+            let role_id = $(td_ele[3]).text()
+            let role_title = $(td_ele[1]).text()
+            let content = "确定要删除" + " " + role_title + " " + "角色吗?"
+            let verify = confirm(content);
+            if(!verify){
+                return false;
+            }
+            $.ajax({
+                url: "{% url "rbac:roles" %}",
+                type: "DELETE",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "role_id": role_id
+                }),
+                success: function (args) {
+                    if (args.status === "success") {
+                        window.location.reload();
+                    } else {
+                        alert(args)
+                    }
+                }
+            })
+        })
+    </script>
+{% endblock %}

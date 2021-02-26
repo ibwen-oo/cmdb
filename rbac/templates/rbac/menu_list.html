@@ -1,0 +1,249 @@
+{% extends "rbac/base.html" %}
+{% load static %}
+{% load customize_tags %}
+
+{% block head %}
+    <style>
+        .menu-container {
+            margin-top: -12px;
+            margin-left: -12px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="menu-container">
+        {# 一级菜单展示开始 #}
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <i class="fa fa-book" aria-hidden="true"></i> 一级菜单
+                    <a href="{% memory_url request 'rbac:manage_menu' %}" class="right btn btn-success btn-xs"
+                       style="padding: 2px 8px;margin: -3px;">
+                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 新建
+                    </a>
+                    {#                    <button id="create-menu" class="right btn btn-success btn-sm" style="padding: 2px 8px;margin: -2px;">#}
+                    {#                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 新建#}
+                    {#                    </button>#}
+                </div>
+                <!-- Table -->
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>图标</th>
+                        <th>选项</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in menus %}
+                        <tr class="{% if row.id|safe == menu_id %}active{% endif %}">
+                            <td>
+                                <a href="?mid={{ row.id }}">{{ row.title }} ({{ row.permission_set.count }})</a>
+                            </td>
+                            <td>
+                                <i class="fa {{ row.icon }}" aria-hidden="true"></i>
+                            </td>
+                            <td>
+                                <a class="btn btn-default btn-xs menu-edit-btn"
+                                   href="{% memory_url request 'rbac:manage_menu' %}?mid={{ row.id }}">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                </a>
+                                <button class="btn btn-danger btn-xs menu-del-btn" menu-id="{{ row.id }}">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {# 一级菜单展示介结束 #}
+
+        {# 二级菜单展示开始 #}
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <i class="fa fa-book" aria-hidden="true"></i> 二级菜单
+                    {% if menu_id %}
+                        <a href="{% memory_url request 'rbac:manage_second_menu' %}"
+                           class="right btn btn-success btn-xs"
+                           style="padding: 2px 8px;margin: -3px;">
+                            <i class="fa fa-plus-circle" aria-hidden="true"></i> 新建
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Table -->
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>CODE&URL</th>
+                        <th>选项</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in second_menus %}
+                        <tr class="{% if row.id|safe == second_menu_id %}active {% endif %}">
+                            <td rowspan="2">
+                                <a href="?mid={{ menu_id }}&sid={{ row.id }}">{{ row.title }}</a>
+                            </td>
+                            <td>{{ row.name }}</td>
+                            <td>
+                                <a class="btn btn-default btn-xs second-menu-edit-btn"
+                                   href="{% memory_url request "rbac:edit_second_menu" row.id %}">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                </a>
+                                <button class="btn btn-danger btn-xs second-menu-del-btn" sid="{{ row.id }}">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="{% if row.id|safe == second_menu_id %}active {% endif %}">
+                            <td colspan="2" style="border-top: 0">{{ row.url }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {# 二级菜单展示结束 #}
+
+        {# 权限展示开始 #}
+        <div class="col-md-5">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <i class="fa fa-gavel" aria-hidden="true"></i> 权限管理
+                    <div class="btn-group right">
+                        {% if second_menu_id %}
+                            <a href="{% memory_url request 'rbac:manage_permission' %}&sid={{ second_menu_id }}"
+                               class="right btn btn-success btn-xs"
+                               style="padding: 2px 8px;margin: -3px;">
+                                <i class="fa fa-plus-circle" aria-hidden="true"></i> 新建
+                            </a>
+                        {% endif %}
+
+                        <a href="{% memory_url request "rbac:multi_manage_permission" %}" class="btn btn-xs btn-primary"
+                           style="padding: 2px 8px;margin: -3px 0;">
+                            <i class="fa fa-mail-forward" aria-hidden="true"></i> 批量操作
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>名称</th>
+                        <th>CODE&URL&ACTION</th>
+                        <th>选项</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for row in permissions %}
+                        <tr>
+                            <td rowspan="2">{{ row.title }}</td>
+                            <td>{{ row.name }}</td>
+                            <td>
+                                <a class="btn btn-default btn-xs" style="color: #333333;" href="{% memory_url request "rbac:edit_permission" row.id %}">
+                                    <i class="fa fa-edit" aria-hidden="true"></i>
+                                </a>
+
+                                <button class="btn btn-danger btn-xs permission-del-btn" p-id="{{ row.id }}">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="border-top: 0">{{ row.url }} | {{ row.action }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        {# 权限展示结束 #}
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $(".menu-del-btn").on("click", function () {
+            let menu_id = $(this).attr("menu-id")
+            let verify = confirm("确定要删除该菜单吗?");
+            if (!verify) {
+                return false;
+            }
+            $.ajax({
+                url: "{% url 'rbac:manage_menu' %}",
+                type: "DELETE",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "menu_id": menu_id
+                }),
+                success: function (args) {
+                    if (args.status === "success") {
+                        window.location.reload();
+                    } else {
+                        alert(args)
+                    }
+                }
+            })
+
+        })
+
+        $(".second-menu-del-btn").on("click", function () {
+            let sid = $(this).attr("sid")
+            let verify = confirm("确定要删除该菜单吗?");
+            if (!verify) {
+                return false;
+            }
+            $.ajax({
+                url: "{% url "rbac:manage_second_menu" %}",
+                type: "DELETE",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "sid": sid
+                }),
+                success: function (args) {
+                    if (args.status === "success") {
+                        window.location.reload();
+                    } else {
+                        alert(args)
+                    }
+                }
+            })
+        })
+
+        $(".permission-del-btn").on("click", function () {
+            let permission_id = $(this).attr("p-id")
+            let verify = confirm("确定要删除该权限吗?");
+            if (!verify) {
+                return false;
+            }
+            $.ajax({
+                url: "{% url "rbac:manage_permission" %}",
+                type: "DELETE",
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "permission_id": permission_id
+                }),
+                success: function (args) {
+                    if (args.status === "success") {
+                        window.location.reload();
+                    } else {
+                        alert(args)
+                    }
+                }
+            })
+        })
+    </script>
+{% endblock %}

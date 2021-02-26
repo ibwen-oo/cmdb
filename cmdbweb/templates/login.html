@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="{% static "web/css/login.css" %}" />
+    <title>登录</title>
+</head>
+<body>
+<div class="login-box">
+    <h2>Login</h2>
+    <form action="/login/" method="post" novalidate class="form-horizontal">
+             {% csrf_token %}
+        <div class="login-field">
+            <input id="username" type="text" name="" required=""/>
+            <label>用户名</label>
+        </div>
+        <div class="login-field">
+            <input id="password" type="password" name="" required=""/>
+            <label>密码</label>
+        </div>
+        <div style="margin-top: 5px;text-align: center;"><span id="errorMsg"></span></div>
+        <div style="text-align: center;">
+            <input id="login-btn" type="button" class="button" value="登 陆">
+        </div>
+        <div>
+            <p style="margin-top: 20px">If you don't have account.Please</p>
+            <p>Click here to <a id="signup">注册</a></p>
+        </div>
+    </form>
+</div>
+
+<script src="{% static "jquery-3.3.1/jquery-3.3.1.js" %}"></script>
+<script src="{% static "getcsrftoken.js" %}"></script>
+
+<script>
+    $(function () {
+        // 登录事件
+        $("#login-btn").on("click", function () {
+            let username = $("#username").val();
+            let password = $("#password").val();
+            console.log(username)
+            console.log(password)
+            $.ajax({
+                url: "/login/",
+                type: "post",
+                dataType: "json",
+                data: {
+                    username: username,
+                    password: password,
+                },
+                success: function (data) {
+                    console.log(data)
+                    if (data.status) {
+                        $("#errorMsg").text(data.msg).css("color", "red").fadeOut(3000);
+                    }else {
+                        location.href = data.msg
+                    }
+                }
+            })
+        })
+
+        // 注册
+        $("#signup").on("click", function () {
+            alert("找管理员申请权限!!!")
+        })
+    })
+</script>
+
+</body>
+</html>

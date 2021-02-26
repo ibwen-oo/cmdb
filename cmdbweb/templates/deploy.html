@@ -1,0 +1,174 @@
+{% extends "rbac/base.html" %}
+{% load static %}
+{% load customize_tags %}
+
+{% block head %}
+    <link rel="stylesheet" href="{% static "web/css/server.css" %}">
+    <link rel="stylesheet" href="{% static "web/css/deploy.css" %}">
+    <title>环境部署</title>
+{% endblock %}
+
+{% block content %}
+    <div class="body-content">
+        {# 搜索部分开始 #}
+        <div class="search">
+            <form class="form-inline">
+                <select name="search_field" id="search_field" class="form-control">
+                    <option value="ipaddress">IP地址</option>
+                    <option value="hostname">主机名</option>
+                    <option value="department">项目</option>
+                </select>
+                <div class="form-group">
+                    <input id="search-content" type="text" class="form-control" placeholder="请输入搜索内容"
+                           name="search_content">
+                </div>
+                <button id="search-btn" type="submit" class="btn btn-default">Search</button>
+            </form>
+        </div>
+        {# 搜索部分结束 #}
+
+        <div class="option-deploy">
+            <button id="nginx" class="deploy-option btn btn-info">NGINX</button>
+            <button id="php" class="deploy-option btn btn-info">PHP</button>
+            <button id="mysql" class="deploy-option btn btn-info">MySQL</button>
+            <button id="lnmp" class="deploy-option btn btn-info">LNMP</button>
+        </div>
+
+        {# 内容表格部分开始 #}
+        <div class="server-content">
+
+            <table class="table table-bordered table-hover active">
+                <thead>
+                <tr>
+                    <th><input type="checkbox" id="select_all"></th>
+                    <th>序号</th>
+                    <th>主机名</th>
+                    <th>ip地址</th>
+                    <th>操作系统</th>
+                    <th>CPU(核)</th>
+                    <th>内存(MB)</th>
+                    <th>项目</th>
+                    <th>机房</th>
+                    <th>状态</th>
+                    <th>备注</th>
+                    {# 使用自定义过滤器验证是否有操作服务器信息的权限 #}
+                    {% if request|has_permission:"cmdbweb:detail-GET" or request|has_permission:"cmdbweb:server-PUT" %}
+                        <th>选项</th>
+                    {% endif %}
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for server in servers %}
+                    <tr>
+                        <td><input type="checkbox" class="selector_server" name="server_id"></td>
+                        <td class="server-id" style="display: none">{{ server.id }}</td>
+                        <!-- 分页之后序号会重新从1计数,需要加上当前页已经接收到多少数据 -->
+                        <td>{{ forloop.counter|add:begin }}</td>
+                        <td>{{ server.name }}</td>
+                        <td>
+                            {% for nic in server.nic.all %}
+                                {% if nic.ipaddress %}
+                                    {{ nic.ipaddress }}<br/>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ server.system }}</td>
+                        <td>{{ server.cpu }}</td>
+                        <td>{{ server.memory }}</td>
+                        <td dep_id="{{ server.department.id }}">{{ server.department.name }}</td>
+                        <td idc_id="{{ server.idc.id }}">{{ server.idc }}</td>
+                        <td status_id="{{ server.status }}">{{ server.get_status_display }}</td>
+                        <td>{{ server.desc }}</td>
+                        <td>
+                            {# 使用自定义过滤器验证是否有查看服务器详情的权限 #}
+                            {% if request|has_permission:"cmdbweb:detail-GET" %}
+                                <button class="btn-info btn-sm">
+                                    <a style="text-decoration: none;color: white"
+                                       href="{% memory_url request "cmdbweb:detail" server.id %}">
+                                        <i class="fa fa-th" aria-hidden="true"></i> 详细
+                                    </a>
+                                </button>
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {# 内容表格部分结束 #}
+
+        {# 分页部分开始 #}
+        <div class="pagination">
+            <!--分页-->
+            {{ pagination_html_str|safe }}
+        </div>
+        {# 分页部分结束 #}
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        // 根据选择改变搜索类型事件
+        $("ul > li > a.search-type").on("click", function () {
+            let val = $(this).text()
+            // console.log(val)
+            $("#search-option").text(val)
+        })
+
+        // 搜索事件
+        $("#search-btn").on("click", function () {
+            // 获取搜索类型和搜索框中的内容
+            let search_field = $("#search_field").val()
+            let search_content = $("#search-content").val()
+            console.log(search_field)
+            console.log(search_content)
+            $.ajax({
+                url: "{% memory_url request "cmdbweb:server" %}?search_field=" + search_field + "&search_content=" + search_content,
+                type: "get",
+                success: function (args) {
+                    console.log("搜索内容")
+                    //window.location.reload();
+                }
+            })
+        })
+
+        // 全选checkbox事件
+        $("#select_all").on("click", function () {
+            if ($(this)[0].checked) {
+                $(".selector_server").attr("checked", "checked")
+            } else {
+                $(".selector_server").removeAttr("checked")
+            }
+        })
+
+        // NGINX/PHP/MySQL/LNMP 事件
+        $(".deploy-option").on("click", function () {
+            let option = $(this).text()
+            let hostname_array = [];
+            let select = $(".selector_server")
+            $.each(select, function (k, v) {
+                if ($(v)[0].checked) {
+                    let hostname_ele = $(v).parent().siblings()[2]
+                    hostname_array.push($(hostname_ele).text())
+                }
+            })
+            console.log(hostname_array)
+            if (hostname_array.length === 0) {
+                alert("请选择服务器")
+            } else {
+                $.ajax({
+                    url: "{% url 'cmdbweb:deploy' %}",
+                    type: "POST",
+                    contentType: 'application/json',
+                    data: JSON.stringify({"option": option, "hostname": hostname_array}),
+                    success: function (arg) {
+                        console.log(arg);
+                    }
+                })
+            }
+
+        })
+    </script>
+{% endblock %}

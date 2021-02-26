@@ -1,0 +1,104 @@
+table {
+    font-size: 12px;
+}
+
+.body-container {
+    margin-left: -10px;
+    /*margin-top: -5px;*/
+}
+
+/*权限分配页面用户区域样式开始*/
+.permission-user-area ul {
+    margin-top: -10px;
+    padding-left: 20px;
+}
+
+.permission-user-area li {
+    cursor: pointer;
+    padding: 2px 0;
+}
+
+.permission-user-area li a {
+    display: block;
+    text-decoration: none;
+}
+
+.permission-user-area li.active {
+    font-weight: bold;
+    color: red;
+}
+
+.permission-user-area li.active a {
+    color: red;
+}
+/*权限分配页面用户区域样式结束*/
+
+/*权限分配页面角色区域样式开始*/
+.role-area tr td a {
+    display: block;
+    text-decoration: none;
+}
+
+.table > tbody > tr > td, .table > thead > tr > th {
+    vertical-align: middle;
+}
+
+.role-area tr.active {
+    background-color: #f1f7fd;
+    border-left: 3px solid #fdc00f;
+}
+/*权限分配页面角色区域样式结束*/
+
+.panel-body {
+    font-size: 12px;
+}
+
+.permission-area tr.root {
+    background-color: #f1f7fd;
+}
+
+.permission-area tr.root td i {
+    margin: 3px;
+}
+
+.permission-area .node {
+
+}
+
+.permission-area .node input[type='checkbox'] {
+    margin: 0 5px;
+}
+
+.permission-area .node .parent {
+    padding: 5px 0;
+}
+
+.permission-area .node label {
+    font-weight: normal;
+    margin-bottom: 0;
+    font-size: 12px;
+}
+
+.permission-area .node .children {
+    padding: 0 0 0 20px;
+}
+
+.permission-area .node .children .child {
+    display: inline-block;
+    margin: 2px 5px;
+}
+
+.select-help {
+    float: right;
+}
+
+.select-help label {
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.select-help .check-all {
+    float: left;
+    display: inline-block;
+    margin-right: 8px;
+}
