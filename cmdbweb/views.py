@@ -47,46 +47,9 @@ def logout(request):
         request.session = ""
         return redirect("/login/")
 
-class UserViews(View):
-    def get(self, *args, **kwargs):
-        pass
-
-    def post(self, *args, **kwargs):
-        pass
-
 
 class IndexView(View):
     def get(self, request, *args, **kwargs):
-        '''
-        for i in range(30):
-            hostname = "physical-{}".format(str(i))
-            name = hostname
-            api_models.Server.objects.create(name=name, hostname=hostname, cpu=8, memory=16384, idc_id=1, department_id=1, server_type="A")
-
-        for i in range(100):
-            hostname = "vm-{}".format(str(i))
-            name = hostname
-            api_models.Server.objects.create(name=name, hostname=hostname, cpu=4, memory=8192, idc_id=1,
-                                             department_id=1, server_type="B")
-
-        for i in range(20):
-            hostname = "host-{}".format(str(i))
-            name = hostname
-            api_models.Server.objects.create(name=name, hostname=hostname, cpu=64, memory=131072, idc_id=1,
-                                             department_id=2, server_type="A")
-
-        for i in range(50):
-            hostname = "ali-{}".format(str(i))
-            name = hostname
-            api_models.Server.objects.create(name=name, hostname=hostname, cpu=8, memory=16384, idc_id=2,
-                                             department_id=2, server_type="C")
-
-        for i in range(50):
-            hostname = "tx-{}".format(str(i))
-            name = hostname
-            api_models.Server.objects.create(name=name, hostname=hostname, cpu=8, memory=16384, idc_id=3,
-                                             department_id=2, server_type="C")
-        '''
         return render(request, "index.html")
 
 
@@ -108,7 +71,6 @@ class ServerView(View):
             # 使用Q构建搜索条件
             q = Q()
             search_content = search_content.strip()
-            print(search_field, search_content)
             if search_field == "ipaddress":
                 ip = api_models.ServerNetwork.objects.filter(ipaddress__icontains=search_content).first()
                 search_field = "id"
@@ -117,7 +79,6 @@ class ServerView(View):
             elif search_field == "department":
                 search_field = "department__name__icontains"
                 q.children.append((search_field, search_content))
-                # d = api_models.Server.objects.filter(department__name__icontains=)
             else:
                 search_field = search_field + "__icontains"
                 q.children.append((search_field, search_content))

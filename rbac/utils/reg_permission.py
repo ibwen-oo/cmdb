@@ -56,7 +56,5 @@ def register_permission(current_user, request):
                 'icon': item['permissions__menu__icon'],
                 'children': [node, ]
             }
-    # print("permission_dict", permission_dict)
-    # print("menu_dict", menu_dict)
     request.session[settings.PERMISSION_SESSION_KEY] = permission_dict
     request.session[settings.MENU_SESSION_KEY] = menu_dict

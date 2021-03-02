@@ -1,6 +1,6 @@
 import re
 from django.conf import settings
-from django.shortcuts import HttpResponse
+from django.shortcuts import HttpResponse, redirect
 from django.utils.deprecation import MiddlewareMixin
 
 class RbacMiddleware(MiddlewareMixin):
@@ -48,7 +48,6 @@ class RbacMiddleware(MiddlewareMixin):
         for item in permission_dict.values():
             reg = "^%s$" % item['url']
             action = item["action"]
-            # print(current_url, reg, request.method, action)
             if re.match(reg, current_url) and request.method == action:
                 flag = True
 
