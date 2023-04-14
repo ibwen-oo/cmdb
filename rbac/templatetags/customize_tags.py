@@ -1,3 +1,5 @@
+import logging
+
 from django import template
 from django.conf import settings
 from collections import OrderedDict
@@ -6,12 +8,14 @@ from rbac.utils import urls
 
 register = template.Library()
 
+
 @register.inclusion_tag('rbac/l1_menu.html')
 def static_menu(request):
     """创建一级菜单"""
 
     menu_list = request.session[settings.MENU_SESSION_KEY]
     return {'menu_list': menu_list}
+
 
 @register.inclusion_tag("rbac/l2_menu.html")
 def multi_menu(request):
@@ -41,13 +45,14 @@ def multi_menu(request):
 
     return {'menu_dict': ordered_dict}
 
+
 @register.inclusion_tag('rbac/breadcrumb.html')
 def breadcrumb(request):
     """实现路径导航功能"""
-    # print(request.breadcrumb)
-    record_list = request.breadcrumb
-    # print("====>", record_list)
-    return {'record_list': request.breadcrumb}
+    if hasattr(request, "breadcrumb"):
+        return {'record_list': request.breadcrumb}
+    return {}
+
 
 @register.filter
 def has_permission(request, name):
@@ -78,9 +83,9 @@ def has_permission(request, name):
                 <button class="btn-info edit-button">编辑</button>
             {% endif %}
     """
-
     if name in request.session[settings.PERMISSION_SESSION_KEY]:
         return True
+
 
 @register.simple_tag
 def memory_url(request, name, *args, **kwargs):

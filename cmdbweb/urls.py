@@ -6,7 +6,6 @@ app_name = "cmdbweb"
 urlpatterns = [
     path('login/', views.Login.as_view(), name="login"),
     path('logout/', views.logout, name="logout"),
-    path('user/', views.UserViews.as_view(), name="user"),
     path('index/', views.IndexView.as_view(), name="index"),
     path('server/', views.ServerView.as_view(), name="server"),
     path('vm/', views.VMView.as_view(), name="vm"),

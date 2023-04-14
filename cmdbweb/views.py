@@ -55,6 +55,7 @@ class IndexView(View):
 
 class ServerView(View):
     """管理服务器视图"""
+
     def get(self, request, *args, **kwargs):
         # 过滤出用户所在组服务器
         group_id = request.session.get("group_id")
@@ -125,8 +126,10 @@ class ServerView(View):
             msg["status"] = "failed"
         return JsonResponse(msg)
 
+
 class ServerDetails(View):
     """服务器详情页视图"""
+
     def get(self, request, *args, **kwargs):
         server_id = kwargs["server_id"]
         server_obj = api_models.Server.objects.filter(pk=server_id).first()
@@ -155,11 +158,13 @@ class ServerDetails(View):
         return render(request, "server_detail.html",
                       {"server_obj": server_obj, "base_info": base_info, "nic_info": nic_info, "disk_info": disk_info})
 
+
 class Hosts(View):
     def get(self, request, *args, **kwargs):
         hosts = api_models.Server.objects.filter(is_virtual=True).count()
 
         return HttpResponse("112211")
+
 
 class VMView(View):
     def get(self, request, *args, **kwargs):
@@ -177,6 +182,7 @@ class VMView(View):
             "pagination_html_str": pagination_html_str,
             "begin": paginator.begin,
         })
+
 
 class VmDetails(View):
     def get(self, request, *args, **kwargs):
@@ -209,6 +215,7 @@ class VmDetails(View):
 
 
 from .utils.sendEmail import send_email
+
 
 class DeployView(View):
     def get(self, request):

@@ -85,9 +85,9 @@
                     <th>状态</th>
                     <th>备注</th>
                     {# 使用自定义过滤器验证是否有操作服务器信息的权限 #}
-                    {% if request|has_permission:"cmdbweb:detail-GET" or request|has_permission:"cmdbweb:server-PUT" %}
-                        <th>选项</th>
-                    {% endif %}
+{#                    {% if request|has_permission:"cmdbweb:detail-GET" or request|has_permission:"cmdbweb:server-PUT" %}#}
+                    <th>选项</th>
+{#                    {% endif %}#}
                 </tr>
                 </thead>
                 <tbody>
@@ -124,7 +124,7 @@
                             {# 使用自定义过滤器验证是否有查看服务器详情的权限 #}
                             {% if request|has_permission:"cmdbweb:detail-GET" %}
                                 <button class="btn-info btn-sm">
-                                    <a style="text-decoration: none;color: white"href="{% memory_url request "cmdbweb:detail" server.id %}">
+                                    <a style="text-decoration: none;color: white" href="{% memory_url request "cmdbweb:detail" server.id %}">
                                     <i class="fa fa-th" aria-hidden="true"></i> 详细
                                 </a>
                                 </button>

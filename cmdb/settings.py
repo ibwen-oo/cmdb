@@ -16,7 +16,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -27,7 +26,6 @@ SECRET_KEY = 'xd73ah+u!fn@&=3a4akbv$op2j-l-4ba%j53qjq89)w@3t+wsa'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -76,22 +74,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cmdb.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cmdb_new',
-        'USER': 'cmdb',
-        'PASSWORD': 'g4p8jl8S&ykg*^1',
-        'HOST': '123.57.93.249',
+        'NAME': 'cmdb',
+        'USER': 'root',
+        'PASSWORD': '123456',
+        'HOST': '10.100.9.101',
         'PORT': '3306',
         'CONN_MAX_AGE': 30,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -111,7 +107,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
@@ -127,7 +122,6 @@ USE_L10N = True
 
 # USE_TZ = True
 USE_TZ = False
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -157,7 +151,7 @@ LOGGING = {
         # 详细的日志格式
         "standard": {
             "format": "%(asctime)s [%(threadName)s: %(thread)d]"
-                        "%(pathname)s:%(funcName)s:%(lineno)d %(levelname)s - %(message)s"
+                      "%(pathname)s:%(funcName)s:%(lineno)d %(levelname)s - %(message)s"
         },
         # 简单的日志格式
         "simple": {
@@ -178,7 +172,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             # 指定路径的名字
             "filename": os.path.join(LOG_DIR, "backend.log"),
-            "maxBytes": 1024*1024*1024,
+            "maxBytes": 1024 * 1024 * 1024,
             # 保存的备份数量
             "backupCount": 5,
             "formatter": "standard",
@@ -190,7 +184,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             # 指定路径的名字
             "filename": os.path.join(LOG_DIR, "statistics.log"),
-            "maxBytes": 1024*1024*5,
+            "maxBytes": 1024 * 1024 * 5,
             # 保存的备份数量
             "backupCount": 5,
             "formatter": "simple",
@@ -210,34 +204,30 @@ LOGGING = {
     }
 }
 
-
 # ##################### 发送邮件配置 #######################
 # 邮件服务器配置
 EMAIL_HOST = 'smtp.qq.com'
 EMAIL_PORT = 25
 EMAIL_HOST_USER = '997083657@qq.com'
 ## 默认抄送地址
-DEFAULT_CC_EMAIL = ("liangbingwen@comsenz-service.com", )
+DEFAULT_CC_EMAIL = ("liangbingwen@comsenz-service.com",)
 EMAIL_HOST_PASSWORD = 'owifoihsvjphbbhg'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 EMAIL_USE_SSL = False
-
 
 # #################### redis 缓存配置 #####################
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://123.57.93.249:8099/1",
+        "LOCATION": "redis://10.100.9.101:6379/1",
         "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            "PASSWORD": "ibwen_oo1122"
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
     }
 }
 
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "default"
-
 
 # #################### 权限相关配置 #######################
 # 业务中的用户表
