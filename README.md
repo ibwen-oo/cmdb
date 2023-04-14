@@ -15,3 +15,7 @@ pip install -r requirements.txt
 
 
 
+# 测试数据
+
+cmdb.sql
+
